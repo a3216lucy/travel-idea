@@ -1,0 +1,84 @@
+//確保每列都有分隔線
+table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+th,
+td {
+  position: relative;
+  padding: 0.75rem;
+  //淡淡的線條顏色
+  border-right: 1px solid #dee2e6;
+}
+
+th:last-child,
+td:last-child {
+  //去掉最後一列的右邊框
+  border-right: none;
+}
+
+th {
+  //表格頂部橫條的分隔線
+  border-bottom: 2px solid #dee2e6;
+}
+
+.resizer {
+  display: inline-block;
+  width: 10px;
+  height: 100%;
+  position: absolute;
+  right: 0;
+  top: 0;
+  cursor: col-resize;
+  user-select: none;
+}
+
+th {
+  position: relative;
+}
+
+.container {
+  margin-top: 2rem;
+}
+
+//使表格在小螢幕設備上可滾動
+.table-responsive {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-responsive > .table {
+  margin-bottom: 0;
+}
+
+//手機尺寸
+@media (max-width: 768px) {
+  .mat-table {
+    overflow-x: auto;
+    display: block;
+  }
+
+  th,
+  td {
+    //不換行
+    white-space: nowrap;
+    min-width: 100px;
+    max-width: 300px;
+    //溢出隱藏
+    overflow: hidden;
+    //超出顯示省略號
+    text-overflow: ellipsis;
+  }
+
+  .mat-form-field {
+    //表單字段寬度 100%
+    width: 100%;
+  }
+}

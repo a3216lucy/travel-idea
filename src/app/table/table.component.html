@@ -1,0 +1,137 @@
+<div class="container mt-5">
+  <div class="table-responsive">
+    <div>
+      <button mat-button (click)="toggleView()">
+        切換到 {{ view === "table" ? "日曆" : "表格" }} 視圖
+      </button>
+    </div>
+
+    <div *ngIf="view === 'table'">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <!-- 列定義 -->
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 1)"
+          >
+            項目名稱
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div *ngIf="!element.editing" (click)="toggleEditMode(element)">
+              {{ element.name }}
+            </div>
+            <div *ngIf="element.editing">
+              <input
+                type="text"
+                [(ngModel)]="element.name"
+                maxlength="60"
+                class="form-control"
+                (blur)="onBlur(element)"
+                (keypress)="onKeyPress($event, element)"
+              />
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 2)"
+          >
+            金額
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div *ngIf="!element.editing" (click)="toggleEditMode(element)">
+              {{ element.amount }}
+            </div>
+            <div *ngIf="element.editing">
+              <input
+                type="number"
+                [(ngModel)]="element.amount"
+                class="form-control"
+                (blur)="onBlur(element)"
+                (keypress)="onKeyPress($event, element)"
+              />
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="selectedCurrency">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 3)"
+          >
+            幣別
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>幣別</mat-label>
+              <mat-select [(ngModel)]="element.selectedCurrency">
+                <mat-option
+                  *ngFor="let currency of currencies"
+                  [value]="currency.code"
+                >
+                  {{ currency.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="people">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 4)"
+          >
+            分帳人
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <mat-form-field appearance="outline">
+              <mat-label>分帳人</mat-label>
+              <mat-select
+                [(ngModel)]="element.people"
+                multiple
+                (selectionChange)="calculateShareAmount(element)"
+              >
+                <mat-option
+                  *ngFor="let person of availablePeople"
+                  [value]="person"
+                >
+                  {{ person }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="shareAmount">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 5)"
+          >
+            分帳金額
+          </th>
+          <td mat-cell *matCellDef="let element">
+            {{ element.shareAmount | currency : element.selectedCurrency }}
+          </td>
+        </ng-container>
+
+        <!-- 標題和行定義 -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <div *ngIf="view === 'calendar'">
+      <full-calendar
+        [events]="calendarEvents"
+        [options]="calendarOptions"
+      ></full-calendar>
+    </div>
+  </div>
+</div>
