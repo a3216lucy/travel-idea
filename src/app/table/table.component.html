@@ -1,8 +1,20 @@
 <div class="container mt-5">
   <div class="table-responsive">
     <div>
-      <button mat-button (click)="toggleView()">
+      <button
+        mat-button
+        class="btn btn-secondary mx-2 my-2"
+        (click)="toggleView()"
+      >
         切換到 {{ view === "table" ? "日曆" : "表格" }} 視圖
+      </button>
+      <button
+        *ngIf="view === 'table'"
+        mat-button
+        class="btn btn-primary mx-2 my-2"
+        (click)="openDialog()"
+      >
+        新增
       </button>
     </div>
 
@@ -13,7 +25,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 1)"
+            (mousedown)="onMouseDown($event, 0)"
           >
             項目名稱
           </th>
@@ -38,7 +50,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 2)"
+            (mousedown)="onMouseDown($event, 1)"
           >
             金額
           </th>
@@ -62,7 +74,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 3)"
+            (mousedown)="onMouseDown($event, 2)"
           >
             幣別
           </th>
@@ -85,7 +97,7 @@
           <th
             mat-header-cell
             *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 4)"
+            (mousedown)="onMouseDown($event, 3)"
           >
             分帳人
           </th>
@@ -108,16 +120,36 @@
           </td>
         </ng-container>
 
-        <ng-container matColumnDef="shareAmount">
+        <ng-container matColumnDef="shareAmount" class="hide-on-small">
           <th
             mat-header-cell
             *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 5)"
+            (mousedown)="onMouseDown($event, 4)"
           >
             分帳金額
           </th>
           <td mat-cell *matCellDef="let element">
             {{ element.shareAmount | currency : element.selectedCurrency }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>操作</th>
+          <td mat-cell *matCellDef="let element">
+            <button
+              mat-icon-button
+              color="primary"
+              (click)="toggleEditMode(element)"
+            >
+              <mat-icon>編輯</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteItem(element.id)"
+            >
+              <mat-icon>刪除</mat-icon>
+            </button>
           </td>
         </ng-container>
 

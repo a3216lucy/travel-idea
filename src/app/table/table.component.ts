@@ -1,10 +1,22 @@
-import { Component, ElementRef, OnDestroy, Renderer2 } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import { MatChipInputEvent } from '@angular/material/chips';
+import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
+import { NgxIndexedDBService } from 'ngx-indexed-db';
+import { ConfirmDialogsComponent } from '../confirm-dialogs/confirm-dialogs.component';
+import { DialogsComponent } from '../dialogs/dialogs.component';
 
-interface Item {
+export interface Item {
+  id?: number;
   name: string;
   amount: number;
   selectedCurrency: string;
@@ -18,44 +30,20 @@ interface Currency {
   code: string;
 }
 
-const ELEMENT_DATA: Item[] = [
-  {
-    name: 'Item 1',
-    amount: 100,
-    selectedCurrency: 'TWD',
-    people: [],
-    shareAmount: 0,
-    editing: false,
-  },
-  {
-    name: 'Item 2',
-    amount: 200,
-    selectedCurrency: 'TWD',
-    people: [],
-    shareAmount: 0,
-    editing: false,
-  },
-  {
-    name: 'Item 3',
-    amount: 300,
-    selectedCurrency: 'TWD',
-    people: [],
-    shareAmount: 0,
-    editing: false,
-  },
-];
-
+/**
+ * 表格頁面
+ */
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
 })
-export class TableComponent implements OnDestroy {
+export class TableComponent implements OnDestroy, AfterViewInit {
   private mouseMoveListener!: () => void;
   private mouseUpListener!: () => void;
   view: 'table' | 'calendar' = 'table';
   separatorKeysCodes: number[] = [13, 188];
-  dataSource = new MatTableDataSource<Item>(ELEMENT_DATA);
+  dataSource = new MatTableDataSource<Item>();
 
   calendarOptions: any = {
     plugins: [dayGridPlugin, interactionPlugin],
@@ -63,13 +51,13 @@ export class TableComponent implements OnDestroy {
   };
 
   availablePeople: string[] = ['懶君', '周肉', '魚鵑'];
-
   displayedColumns: string[] = [
     'name',
     'amount',
     'selectedCurrency',
     'people',
     'shareAmount',
+    'actions',
   ];
 
   calendarEvents = [
@@ -83,10 +71,92 @@ export class TableComponent implements OnDestroy {
     { name: '美金', code: 'USD' },
   ];
 
-  constructor(private renderer: Renderer2, private el: ElementRef) {}
+  @ViewChild('table') table: ElementRef | undefined;
+
+  constructor(
+    private renderer: Renderer2,
+    private el: ElementRef,
+    private dbService: NgxIndexedDBService,
+    public dialog: MatDialog
+  ) {}
+
+  ngAfterViewInit() {
+    this.loadItems();
+    this.setUpColumnResize();
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogsComponent, {
+      width: '250px',
+      data: {},
+    });
+
+    dialogRef.afterClosed().subscribe((result: Item) => {
+      if (result) {
+        this.addItem(result);
+      }
+    });
+  }
+
+  loadItems(): void {
+    this.dbService.getAll<Item>('items').subscribe((items: Item[]) => {
+      this.dataSource.data = items;
+    });
+  }
+
+  addItem(newItem: Item): void {
+    this.dbService.add<Item>('items', newItem).subscribe(() => {
+      this.loadItems();
+    });
+  }
+
+  updateItem(item: Item): void {
+    if (item.id !== undefined) {
+      this.dbService.update('items', item).subscribe(() => {
+        this.loadItems();
+      });
+    }
+  }
+
+  deleteItem(id: number): void {
+    const dialogRef = this.dialog.open(ConfirmDialogsComponent, {
+      width: '250px',
+      data: { message: '確定要刪除這個項目嗎？' },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.dbService.delete('items', id).subscribe(
+          () => {
+            this.loadItems();
+          },
+          (error) => {
+            console.error('刪除時發生錯誤：', error);
+            // 可以進行錯誤處理，例如顯示用戶錯誤消息
+          }
+        );
+      }
+    });
+  }
+
+  setUpColumnResize() {
+    if (this.table) {
+      const thElements = this.table.nativeElement.querySelectorAll('th');
+      thElements.forEach((th: HTMLElement, index: number) => {
+        const resizer = this.renderer.createElement('div');
+        this.renderer.addClass(resizer, 'resizer');
+        this.renderer.listen(resizer, 'mousedown', (event) =>
+          this.onMouseDown(event, index)
+        );
+        this.renderer.appendChild(th, resizer);
+      });
+    }
+  }
 
   onMouseDown(event: MouseEvent, colIndex: number) {
-    const thElements = this.el.nativeElement.querySelectorAll('th');
+    const thElements = this.table?.nativeElement.querySelectorAll('th');
+    if (!thElements) return;
+
     const th = thElements[colIndex];
     const startX = event.pageX;
     const startWidth = th.offsetWidth;
@@ -117,6 +187,9 @@ export class TableComponent implements OnDestroy {
 
   toggleEditMode(item: Item) {
     item.editing = !item.editing;
+    if (!item.editing) {
+      this.updateItem(item);
+    }
   }
 
   toggleView() {
@@ -136,29 +209,29 @@ export class TableComponent implements OnDestroy {
   calculateShareAmount(item: Item) {
     const numPeople = item.people.length;
     item.shareAmount = numPeople > 0 ? item.amount / numPeople : 0;
+    this.updateItem(item);
   }
 
   addPerson(event: MatChipInputEvent, item: Item) {
     const input = event.input;
     const value = event.value;
 
-    // Add our person
     if ((value || '').trim()) {
       item.people.push(value.trim());
     }
 
-    // Reset the input value
     if (input) {
       input.value = '';
     }
+    this.calculateShareAmount(item);
   }
 
   removePerson(person: string, item: Item) {
     const index = item.people.indexOf(person);
-
     if (index >= 0) {
       item.people.splice(index, 1);
     }
+    this.calculateShareAmount(item);
   }
 
   ngOnDestroy() {
