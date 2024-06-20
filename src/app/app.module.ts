@@ -2,6 +2,8 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -15,6 +17,7 @@ import { AppComponent } from './app.component';
 import { ConfirmDialogsComponent } from './confirm-dialogs/confirm-dialogs.component';
 import { DialogsComponent } from './dialogs/dialogs.component';
 import { TableComponent } from './table/table.component';
+import { EndDialogsComponent } from './end-dialogs/end-dialogs.component';
 
 const dbConfig: DBConfig = {
   name: 'MyDb',
@@ -50,6 +53,7 @@ const dbConfig: DBConfig = {
     TableComponent,
     DialogsComponent,
     ConfirmDialogsComponent,
+    EndDialogsComponent,
   ],
   imports: [
     BrowserModule,
@@ -63,6 +67,8 @@ const dbConfig: DBConfig = {
     MatButtonModule,
     FullCalendarModule,
     MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     NgxIndexedDBModule.forRoot(dbConfig),
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

@@ -30,6 +30,7 @@
     "@ng-select/ng-select": "^13.2.0",
     "@popperjs/core": "^2.10.2",
     "bootstrap": "^5.2.0",
+    "date-fns": "^3.6.0",
     "ngx-indexed-db": "^18.0.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",

@@ -9,15 +9,18 @@ import {
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { FullCalendarComponent } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { NgxIndexedDBService } from 'ngx-indexed-db';
 import { ConfirmDialogsComponent } from '../confirm-dialogs/confirm-dialogs.component';
 import { DialogsComponent } from '../dialogs/dialogs.component';
+import { EndDialogsComponent } from '../end-dialogs/end-dialogs.component';
 
 export interface Item {
   id?: number;
   name: string;
+  date: Date;
   amount: number;
   selectedCurrency: string;
   people: string[];
@@ -42,17 +45,28 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   private mouseMoveListener!: () => void;
   private mouseUpListener!: () => void;
   view: 'table' | 'calendar' = 'table';
+  @ViewChild('calendar') calendarComponent!: FullCalendarComponent;
+
   separatorKeysCodes: number[] = [13, 188];
   dataSource = new MatTableDataSource<Item>();
 
   calendarOptions: any = {
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: 'dayGridMonth',
+    eventClick: this.handleEventClick.bind(this),
+  };
+
+  // FullCalendar 标题设置
+  calendarHeader = {
+    left: 'prev,next today',
+    center: 'title',
+    right: 'dayGridMonth,timeGridWeek,timeGridDay',
   };
 
   availablePeople: string[] = ['懶君', '周肉', '魚鵑'];
   displayedColumns: string[] = [
     'name',
+    'date',
     'amount',
     'selectedCurrency',
     'people',
@@ -60,11 +74,7 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     'actions',
   ];
 
-  calendarEvents = [
-    { title: 'Event 1', date: '2023-06-01' },
-    { title: 'Event 2', date: '2023-06-02' },
-  ];
-
+  calendarEvents: any[] = [];
   currencies: Currency[] = [
     { name: '台幣', code: 'TWD' },
     { name: '日圓', code: 'JPY' },
@@ -83,6 +93,22 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     this.loadItems();
     this.setUpColumnResize();
+    if (this.calendarComponent && this.calendarComponent.getApi()) {
+      this.calendarComponent.getApi().removeAllEvents();
+      this.calendarComponent.getApi().addEventSource(this.calendarEvents);
+    }
+  }
+
+  handleEventClick(info: any) {
+    // info 包含了點擊的事件的詳細信息
+    const dialogRef = this.dialog.open(EndDialogsComponent, {
+      width: '250px',
+      data: { event: info.event },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      // 可以在對話框關閉後執行一些操作
+    });
   }
 
   openDialog(): void {
@@ -101,6 +127,15 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   loadItems(): void {
     this.dbService.getAll<Item>('items').subscribe((items: Item[]) => {
       this.dataSource.data = items;
+      this.calendarEvents = items.map((item) => ({
+        title: item.name,
+        start: item.date ? item.date.toISOString() : '', // 检查并转换日期
+        // 其他可能需要的属性
+      }));
+      if (this.calendarComponent && this.calendarComponent.getApi()) {
+        this.calendarComponent.getApi().removeAllEvents();
+        this.calendarComponent.getApi().addEventSource(this.calendarEvents);
+      }
     });
   }
 

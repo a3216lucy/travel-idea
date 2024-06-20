@@ -5,6 +5,17 @@
     <input matInput [(ngModel)]="item.name" />
   </mat-form-field>
   <mat-form-field appearance="outline">
+    <mat-label>日期</mat-label>
+    <input
+      matInput
+      [matDatepicker]="picker"
+      [(ngModel)]="item.date"
+      name="date"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <mat-form-field appearance="outline">
     <mat-label>金額</mat-label>
     <input matInput type="number" [(ngModel)]="item.amount" />
   </mat-form-field>

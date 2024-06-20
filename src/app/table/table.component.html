@@ -46,6 +46,11 @@
           </td>
         </ng-container>
 
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>日期</th>
+          <td mat-cell *matCellDef="let element">{{ element.date | date }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="amount">
           <th
             mat-header-cell
@@ -161,6 +166,8 @@
 
     <div *ngIf="view === 'calendar'">
       <full-calendar
+        #calendar
+        [header]="calendarHeader"
         [events]="calendarEvents"
         [options]="calendarOptions"
       ></full-calendar>

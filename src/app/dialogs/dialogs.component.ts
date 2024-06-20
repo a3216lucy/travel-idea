@@ -10,6 +10,7 @@ import { Item } from '../table/table.component';
 export class DialogsComponent {
   item: Item = {
     name: '',
+    date: new Date(),
     amount: 0,
     selectedCurrency: 'TWD',
     people: [],
