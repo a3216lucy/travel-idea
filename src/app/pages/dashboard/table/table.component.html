@@ -1,0 +1,126 @@
+<div class="container-fluid custom-container mt-4">
+  <div class="table-responsive">
+    <div class="my-4">
+      <button mat-button class="btn btn-secondary" (click)="toggleView()">
+        切換到 {{ view === "table" ? "日曆" : "表格" }} 視圖
+      </button>
+      <button
+        *ngIf="view === 'table'"
+        mat-button
+        class="btn btn-primary mx-2"
+        (click)="openDialog()"
+      >
+        新增
+      </button>
+    </div>
+
+    <div *ngIf="view === 'table'">
+      <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
+        <!-- 列定義 -->
+
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            (mousedown)="onMouseDown($event, 0)"
+          >
+            項目名稱
+          </th>
+          <td mat-cell *matCellDef="let element">
+            <div>
+              {{ element.name }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef class="text-center">日期</th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            {{ element.date | date : "yyyy/MM/dd" }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="amount">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-center"
+            (mousedown)="onMouseDown($event, 1)"
+          >
+            金額
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <div>
+              {{ element.selectedCurrency }} {{ element.amount | currency }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="isPaid">
+          <th mat-header-cell *matHeaderCellDef class="text-center">
+            是否已付款
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <div>{{ element.isPaid ? element.paidPerson : "-" }}</div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="people">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-center"
+            (mousedown)="onMouseDown($event, 0)"
+          >
+            分帳人
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <div>
+              {{ element.people }}
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="shareAmount" class="hide-on-small">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-center"
+            (mousedown)="onMouseDown($event, 3)"
+          >
+            分帳金額
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            {{ element.selectedCurrency }} {{ element.shareAmount | currency }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="text-center">操作</th>
+          <td mat-cell *matCellDef="let element" class="text-center">
+            <div class="action-buttons d-flex justify-content-center">
+              <button mat-icon-button (click)="openEditDialog(element)">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteItem(element.id)">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- 標題和行定義 -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <div *ngIf="view === 'calendar'">
+      <full-calendar
+        #calendar
+        [events]="calendarEvents"
+        [options]="calendarOptions"
+      ></full-calendar>
+    </div>
+  </div>
+</div>

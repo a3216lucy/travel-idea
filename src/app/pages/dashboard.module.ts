@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { FullCalendarModule } from '@fullcalendar/angular';
-import { SharedComponentsModule } from '../shared/component/shared-components.module';
-import { SharedMaterialModule } from '../shared/shared-material/shared-material.module';
+import { SharedComponentsModule } from '@shared/component/shared-components.module';
+import { SharedMaterialModule } from '@shared/shared-material/shared-material.module';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { TableComponent } from './table/table.component';
+import { TableComponent } from './dashboard/table/table.component';
 
 const components = [TableComponent, DashboardComponent];
 

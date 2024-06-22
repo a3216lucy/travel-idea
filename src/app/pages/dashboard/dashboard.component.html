@@ -1,1 +1,22 @@
-<p>dashboard works!</p>
+<section class="main">
+  <mat-tab-group
+    mat-stretch-tabs
+    backgroundColor="primary"
+    color="accent"
+    [(selectedIndex)]="tabIndex"
+  >
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>paid</mat-icon>&nbsp;記帳
+      </ng-template>
+      <app-table></app-table>
+    </mat-tab>
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon>swap_calls</mat-icon>&nbsp;交通
+      </ng-template>
+      文字文字文字
+    </mat-tab>
+    <mat-tab label="其他"> 其他畫面 </mat-tab>
+  </mat-tab-group>
+</section>

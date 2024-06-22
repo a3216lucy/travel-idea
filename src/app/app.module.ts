@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
-import { environment } from 'src/environments/environment';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { environment } from '@env/environment';
 import { AppComponent } from './app.component';
 import { DashboardModule } from './pages/dashboard.module';
 import { SharedComponentsModule } from './shared/component/shared-components.module';
@@ -15,6 +16,7 @@ import { SharedMaterialModule } from './shared/shared-material/shared-material.m
     SharedComponentsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFirestoreModule,
+    BrowserAnimationsModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

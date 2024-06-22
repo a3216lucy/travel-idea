@@ -1,3 +1,9 @@
+.custom-container {
+  margin-top: 2rem; /* 保留原有的上邊界 */
+  padding: 0 1rem; /* 設置左右邊界為 1rem，可根據需要調整 */
+  max-width: calc(100% - 2rem); /* 計算最大寬度，減去左右邊界的總和 */
+}
+
 /* 確保每列都有分隔線 */
 table {
   border-collapse: separate;
@@ -11,21 +17,17 @@ table {
 th,
 td {
   position: relative;
-  /* 添加內間距 */
   padding: 0.75rem;
-  /* 淡淡的線條顏色，透明度調整為0.4 */
   border-right: 1px solid rgba(222, 226, 230, 0.4);
-  /* 透明度調整為0.75 */
   border-bottom: 2px solid rgba(222, 226, 230, 0.75);
 }
 
 th:last-child,
 td:last-child {
-  border-right: none; /* 去掉最後一列的右邊框 */
+  border-right: none;
 }
 
 th {
-  /* 表格頂部橫條的分隔線，透明度調整為0.75 */
   border-bottom: 2px solid rgba(222, 226, 230, 0.75);
 }
 
@@ -44,11 +46,12 @@ th {
   position: relative;
 }
 
-.container {
+.container-fluid {
   margin-top: 2rem;
+  width: 100%;
+  padding: 0;
 }
 
-/* 使表格在小螢幕設備上可滾動 */
 .table-responsive {
   display: block;
   width: 100%;
@@ -60,7 +63,12 @@ th {
   margin-bottom: 0;
 }
 
-/* 手機尺寸 */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* 手機和平板尺寸 */
 @media (max-width: 768px) {
   .mat-table {
     overflow-x: auto;
@@ -69,28 +77,36 @@ th {
 
   th,
   td {
-    /* 不換行 */
     white-space: nowrap;
     min-width: 100px;
     max-width: 300px;
-    /* 溢出隱藏 */
     overflow: hidden;
-    /* 超出顯示省略號 */
     text-overflow: ellipsis;
     padding: 0.5rem;
     font-size: 0.875rem;
   }
 
   .mat-form-field {
-    /* 表單字段寬度 100% */
     width: 100%;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
   }
 
-  /* 隱藏不重要的列 */
   .hide-on-small {
     display: none;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-buttons button {
+    font-size: 0.75rem;
+  }
+
+  .action-buttons mat-icon {
+    font-size: 1rem;
   }
 }
 
@@ -102,15 +118,12 @@ th {
     max-width: 200px;
     font-size: 0.75rem;
   }
-}
 
-/* 全局樣式調整 */
-.mat-elevation-z8 {
-  box-shadow: 0px 3px 3px -2px rgba(0, 0, 0, 0.2),
-    0px 3px 4px 0px rgba(0, 0, 0, 0.14), 0px 1px 8px 0px rgba(0, 0, 0, 0.12);
-}
+  .action-buttons button {
+    font-size: 0.65rem;
+  }
 
-/* 調整.mat-form-field的樣式 */
-.mat-form-field {
-  margin-right: 1rem;
+  .action-buttons mat-icon {
+    font-size: 0.9rem;
+  }
 }

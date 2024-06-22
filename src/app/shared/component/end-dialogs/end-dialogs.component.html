@@ -1,9 +1,15 @@
-<h2 mat-dialog-title>Event Details</h2>
-<mat-dialog-content>
-  <p><strong>Title:</strong> {{ data.event.title }}</p>
-  <p><strong>Start Date:</strong> {{ data.event.start }}</p>
-  <!-- 其他事件詳細信息 -->
-</mat-dialog-content>
+<h2 mat-dialog-title>活動詳情</h2>
+<div mat-dialog-content class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <p><strong>活動：</strong> {{ data.event.title }}</p>
+      <p>
+        <strong>時間：</strong>
+        {{ data.event.start | date : "yyyy/MM/dd hh:mm:ss" }}
+      </p>
+    </div>
+  </div>
+</div>
 <mat-dialog-actions>
   <button mat-button mat-dialog-close>Close</button>
 </mat-dialog-actions>
