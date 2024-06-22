@@ -6,19 +6,19 @@ import {
   Renderer2,
   ViewChild,
 } from '@angular/core';
+import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { FullCalendarComponent } from '@fullcalendar/angular';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { NgxIndexedDBService } from 'ngx-indexed-db';
-import { ConfirmDialogsComponent } from '../confirm-dialogs/confirm-dialogs.component';
-import { DialogsComponent } from '../dialogs/dialogs.component';
-import { EndDialogsComponent } from '../end-dialogs/end-dialogs.component';
+import { ConfirmDialogsComponent } from '../../shared/component/confirm-dialogs/confirm-dialogs.component';
+import { DialogsComponent } from '../../shared/component/dialogs/dialogs.component';
+import { EndDialogsComponent } from '../../shared/component/end-dialogs/end-dialogs.component';
 
 export interface Item {
-  id?: number;
+  id?: string;
   name: string;
   date: Date;
   amount: number;
@@ -56,7 +56,6 @@ export class TableComponent implements OnDestroy, AfterViewInit {
     eventClick: this.handleEventClick.bind(this),
   };
 
-  // FullCalendar 标题设置
   calendarHeader = {
     left: 'prev,next today',
     center: 'title',
@@ -86,7 +85,7 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   constructor(
     private renderer: Renderer2,
     private el: ElementRef,
-    private dbService: NgxIndexedDBService,
+    private db: AngularFireDatabase,
     public dialog: MatDialog
   ) {}
 
@@ -100,7 +99,6 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   }
 
   handleEventClick(info: any) {
-    // info 包含了點擊的事件的詳細信息
     const dialogRef = this.dialog.open(EndDialogsComponent, {
       width: '250px',
       data: { event: info.event },
@@ -125,35 +123,41 @@ export class TableComponent implements OnDestroy, AfterViewInit {
   }
 
   loadItems(): void {
-    this.dbService.getAll<Item>('items').subscribe((items: Item[]) => {
-      this.dataSource.data = items;
-      this.calendarEvents = items.map((item) => ({
-        title: item.name,
-        start: item.date ? item.date.toISOString() : '', // 检查并转换日期
-        // 其他可能需要的属性
-      }));
-      if (this.calendarComponent && this.calendarComponent.getApi()) {
-        this.calendarComponent.getApi().removeAllEvents();
-        this.calendarComponent.getApi().addEventSource(this.calendarEvents);
-      }
-    });
+    this.db
+      .list<Item>('items')
+      .valueChanges()
+      .subscribe((items: Item[]) => {
+        this.dataSource.data = items; // 將資料指派給 MatTableDataSource
+        // 更新日曆事件等其他需要同步更新的資料
+        this.calendarEvents = items.map((item) => ({
+          title: item.name,
+          start: item.date ? item.date.toISOString() : '',
+        }));
+        // 更新日曆事件
+        if (this.calendarComponent && this.calendarComponent.getApi()) {
+          this.calendarComponent.getApi().removeAllEvents();
+          this.calendarComponent.getApi().addEventSource(this.calendarEvents);
+        }
+      });
   }
 
   addItem(newItem: Item): void {
-    this.dbService.add<Item>('items', newItem).subscribe(() => {
-      this.loadItems();
+    const itemsRef = this.db.list('items');
+    itemsRef.push(newItem).then(() => {
+      this.loadItems(); // 新增後重新載入資料
     });
   }
 
   updateItem(item: Item): void {
-    if (item.id !== undefined) {
-      this.dbService.update('items', item).subscribe(() => {
+    if (item.id) {
+      const itemRef = this.db.object(`items/${item.id}`);
+      itemRef.update(item).then(() => {
         this.loadItems();
       });
     }
   }
 
-  deleteItem(id: number): void {
+  deleteItem(id: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogsComponent, {
       width: '250px',
       data: { message: '確定要刪除這個項目嗎？' },
@@ -161,15 +165,12 @@ export class TableComponent implements OnDestroy, AfterViewInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.dbService.delete('items', id).subscribe(
-          () => {
+        this.db
+          .object(`items/${id}`)
+          .remove()
+          .then(() => {
             this.loadItems();
-          },
-          (error) => {
-            console.error('刪除時發生錯誤：', error);
-            // 可以進行錯誤處理，例如顯示用戶錯誤消息
-          }
-        );
+          });
       }
     });
   }
