@@ -1,0 +1,71 @@
+<div class="container-fluid custom-container mt-4">
+  <div class="table-responsive">
+    <mat-accordion class="accordion-list">
+      <button class="btn btn-primary my-3" (click)="addAccordionItem()">
+        新增項目
+      </button>
+      <div class="accordion" id="accordionExample">
+        <mat-expansion-panel
+          class="card"
+          *ngFor="let item of accordionItems; let i = index"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>{{ item.headerText }}</mat-panel-title>
+            <mat-panel-description>
+              {{ item.headerDescription }}
+              <div class="action-buttons">
+                <button
+                  mat-icon-button
+                  *ngIf="!item.isEditing"
+                  (click)="editAccordionItem(i)"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button (click)="removeAccordionItem(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+          <mat-expansion-panel-content>
+            <mat-vertical-stepper>
+              <mat-step>
+                <ng-template matStepLabel>
+                  <u>行程1</u>
+                </ng-template>
+                <div
+                  *ngIf="!item.isEditing"
+                  [innerHTML]="item.contentText"
+                ></div>
+                <div *ngIf="item.isEditing">
+                  <quill-editor
+                    [(ngModel)]="item.contentText"
+                    (onContentChanged)="onContentChanged($event, i)"
+                  ></quill-editor>
+                  <button
+                    class="btn btn-secondary"
+                    (click)="saveAccordionItem(i)"
+                  >
+                    儲存
+                  </button>
+                </div>
+              </mat-step>
+              <mat-step>
+                <ng-template matStepLabel>
+                  <em>行程2</em>
+                </ng-template>
+                <h4>細節內容</h4>
+              </mat-step>
+              <mat-step>
+                <ng-template matStepLabel>
+                  <em>行程3</em>
+                </ng-template>
+                <h4>細節內容</h4>
+              </mat-step>
+            </mat-vertical-stepper>
+          </mat-expansion-panel-content>
+        </mat-expansion-panel>
+      </div>
+    </mat-accordion>
+  </div>
+</div>

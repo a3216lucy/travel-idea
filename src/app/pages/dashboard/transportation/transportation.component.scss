@@ -1,0 +1,38 @@
+.card mat-expansion-panel {
+  background-color: #fff;
+  margin-bottom: 20px;
+}
+
+.mat-expansion-panel {
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  border-bottom: 2px solid #ccc;
+}
+
+.mat-expansion-panel.mat-expanded {
+  border-bottom: 1px solid #ccc;
+}
+
+.accordion-list .mat-expansion-panel-header-title,
+.accordion-list .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.accordion-list .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.accordion-list .mat-form-field + .mat-form-field {
+  margin-left: 8px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0;
+}
+
+.action-buttons button {
+  margin: 0;
+}
