@@ -1,17 +1,15 @@
 .custom-container {
-  margin-top: 2rem; /* 保留原有的上邊界 */
-  padding: 0 1rem; /* 設置左右邊界為 1rem，可根據需要調整 */
-  max-width: calc(100% - 2rem); /* 計算最大寬度，減去左右邊界的總和 */
+  margin-top: 2rem;
+  padding: 0 1rem;
+  max-width: calc(100% - 2rem);
 }
 
-/* 確保每列都有分隔線 */
 table {
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
   max-width: 100%;
   overflow: hidden;
-  white-space: nowrap;
 }
 
 th,
@@ -31,6 +29,11 @@ th {
   border-bottom: 2px solid rgba(222, 226, 230, 0.75);
 }
 
+td .text-wrap {
+  white-space: normal; /* Ensure text wraps */
+  word-break: break-word; /* Break words that are too long */
+}
+
 .resizer {
   display: inline-block;
   width: 10px;
@@ -44,12 +47,6 @@ th {
 
 th {
   position: relative;
-}
-
-.container-fluid {
-  margin-top: 2rem;
-  width: 100%;
-  padding: 0;
 }
 
 .table-responsive {

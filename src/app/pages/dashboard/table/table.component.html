@@ -1,6 +1,6 @@
-<div class="container-fluid custom-container mt-4">
+<div class="container-fluid custom-container">
   <div class="table-responsive">
-    <div class="my-4">
+    <div class="my-2 d-flex">
       <button mat-button class="btn btn-secondary" (click)="toggleView()">
         切換到 {{ view === "table" ? "日曆" : "表格" }} 視圖
       </button>
@@ -17,17 +17,10 @@
     <div *ngIf="view === 'table'">
       <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 w-100">
         <!-- 列定義 -->
-
         <ng-container matColumnDef="name">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            (mousedown)="onMouseDown($event, 0)"
-          >
-            項目名稱
-          </th>
+          <th mat-header-cell *matHeaderCellDef>項目名稱</th>
           <td mat-cell *matCellDef="let element">
-            <div>
+            <div class="text-wrap">
               {{ element.name }}
             </div>
           </td>
@@ -41,18 +34,9 @@
         </ng-container>
 
         <ng-container matColumnDef="amount">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="text-center"
-            (mousedown)="onMouseDown($event, 1)"
-          >
-            金額
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-center">金額</th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            <div>
-              {{ element.selectedCurrency }} {{ element.amount | currency }}
-            </div>
+            {{ element.selectedCurrency }} {{ element.amount | currency }}
           </td>
         </ng-container>
 
@@ -61,33 +45,19 @@
             是否已付款
           </th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            <div>{{ element.isPaid ? element.paidPerson : "-" }}</div>
+            {{ element.isPaid ? element.paidPerson : "-" }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="people">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="text-center"
-            (mousedown)="onMouseDown($event, 0)"
-          >
-            分帳人
-          </th>
+          <th mat-header-cell *matHeaderCellDef class="text-center">分帳人</th>
           <td mat-cell *matCellDef="let element" class="text-center">
-            <div>
-              {{ element.people }}
-            </div>
+            {{ element.people }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="shareAmount" class="hide-on-small">
-          <th
-            mat-header-cell
-            *matHeaderCellDef
-            class="text-center"
-            (mousedown)="onMouseDown($event, 3)"
-          >
+          <th mat-header-cell *matHeaderCellDef class="text-center">
             分帳金額
           </th>
           <td mat-cell *matCellDef="let element" class="text-center">

@@ -1,0 +1,20 @@
+.main {
+  /* 固定外框高度為整個視窗高度 */
+  height: 100vh;
+}
+
+.fixed-top {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff;
+}
+
+.content {
+  /* 調整內容區域的 padding */
+  padding: 20px 0;
+  /* 啟用垂直捲軸 */
+  overflow-y: auto;
+  /* 調整內容區域的最大高度，留出頂部 tab 的高度 */
+  max-height: calc(100vh - 40px);
+}

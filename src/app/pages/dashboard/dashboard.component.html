@@ -1,22 +1,35 @@
 <section class="main">
-  <mat-tab-group
-    mat-stretch-tabs
-    backgroundColor="primary"
-    color="accent"
-    [(selectedIndex)]="tabIndex"
-  >
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>paid</mat-icon>&nbsp;記帳
-      </ng-template>
+  <div class="fixed-top">
+    <mat-tab-group
+      mat-stretch-tabs
+      backgroundColor="primary"
+      color="accent"
+      [(selectedIndex)]="tabIndex"
+    >
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>paid</mat-icon>&nbsp;記帳
+        </ng-template>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>swap_calls</mat-icon>&nbsp;交通
+        </ng-template>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>checklist</mat-icon>&nbsp;提醒事項
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+  <div class="content">
+    <ng-container *ngIf="tabIndex === 0">
       <app-table></app-table>
-    </mat-tab>
-    <mat-tab>
-      <ng-template mat-tab-label>
-        <mat-icon>swap_calls</mat-icon>&nbsp;交通
-      </ng-template>
+    </ng-container>
+    <ng-container *ngIf="tabIndex === 1">
       <app-transportation></app-transportation>
-    </mat-tab>
-    <mat-tab label="提醒事項"> 項目項目項目項目項目 </mat-tab>
-  </mat-tab-group>
+    </ng-container>
+    <ng-container *ngIf="tabIndex === 2"> 提醒事項內容 </ng-container>
+  </div>
 </section>

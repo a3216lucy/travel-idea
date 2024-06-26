@@ -10,59 +10,154 @@
           *ngFor="let item of accordionItems; let i = index"
         >
           <mat-expansion-panel-header>
-            <mat-panel-title>{{ item.headerText }}</mat-panel-title>
-            <mat-panel-description>
-              {{ item.headerDescription }}
-              <div class="action-buttons">
+            <div class="header-content d-flex align-items-center w-100 mt-6">
+              <mat-panel-title class="col-md-12">
+                <span *ngIf="!item.header.isEditing">
+                  {{ item.header.headerText }}
+                </span>
+                <mat-form-field
+                  appearance="outline"
+                  class="w-100 header-input"
+                  *ngIf="item.header.isEditing"
+                >
+                  <mat-label>標題</mat-label>
+                  <input
+                    matInput
+                    [(ngModel)]="item.header.headerText"
+                    placeholder="標題"
+                    required
+                  />
+                </mat-form-field>
+              </mat-panel-title>
+              <mat-panel-description class="col-md-12">
+                <span>{{
+                  item.header.totalPrice | currency : "TWD" : "symbol"
+                }}</span>
+              </mat-panel-description>
+              <div class="col-md-12 action-buttons d-flex">
                 <button
                   mat-icon-button
-                  *ngIf="!item.isEditing"
+                  *ngIf="!item.header.isEditing"
                   (click)="editAccordionItem(i)"
                 >
                   <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  *ngIf="item.header.isEditing"
+                  (click)="saveAccordionHeader(i)"
+                >
+                  <mat-icon>save</mat-icon>
                 </button>
                 <button mat-icon-button (click)="removeAccordionItem(i)">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>
-            </mat-panel-description>
+            </div>
           </mat-expansion-panel-header>
           <mat-expansion-panel-content>
-            <mat-vertical-stepper>
-              <mat-step>
+            <mat-vertical-stepper [linear]="false">
+              <mat-step *ngFor="let step of item.steps; let j = index">
                 <ng-template matStepLabel>
-                  <u>行程1</u>
+                  <div *ngIf="!step.isEditing">
+                    <div>
+                      <span>{{ step.title }} </span>
+                      <span style="color: grey">{{
+                        step.price | currency : "TWD" : "symbol"
+                      }}</span>
+                    </div>
+                    <div style="color: brown">
+                      <span>{{ step.start }}</span>
+                      <span> - </span>
+                      <span>{{ step.end }}</span>
+                    </div>
+                  </div>
+                  <div *ngIf="step.isEditing">
+                    <div class="row">
+                      <div class="col-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>路線</mat-label>
+                          <input
+                            matInput
+                            [(ngModel)]="step.title"
+                            placeholder="路線"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+                      <div class="col-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>票錢</mat-label>
+                          <input
+                            matInput
+                            type="number"
+                            [(ngModel)]="step.price"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>起站</mat-label>
+                          <input
+                            matInput
+                            [(ngModel)]="step.start"
+                            placeholder="起站"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+                      <div class="col-6">
+                        <mat-form-field appearance="outline" class="w-100">
+                          <mat-label>訖站</mat-label>
+                          <input
+                            matInput
+                            [(ngModel)]="step.end"
+                            placeholder="訖站"
+                            required
+                          />
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
                 </ng-template>
-                <div
-                  *ngIf="!item.isEditing"
-                  [innerHTML]="item.contentText"
-                ></div>
-                <div *ngIf="item.isEditing">
-                  <quill-editor
-                    [(ngModel)]="item.contentText"
-                    (onContentChanged)="onContentChanged($event, i)"
-                  ></quill-editor>
-                  <button
-                    class="btn btn-secondary"
-                    (click)="saveAccordionItem(i)"
-                  >
-                    儲存
-                  </button>
+                <div class="step-content">
+                  <div *ngIf="!step.isEditing">
+                    <div [innerHTML]="step.content"></div>
+                  </div>
+                  <div *ngIf="step.isEditing">
+                    <quill-editor
+                      [(ngModel)]="step.content"
+                      (onContentChanged)="onStepContentChanged($event, i, j)"
+                    ></quill-editor>
+                  </div>
+                  <div class="step-actions">
+                    <button
+                      mat-icon-button
+                      *ngIf="step.isEditing"
+                      (click)="saveStepContent(i, j)"
+                    >
+                      <mat-icon>save</mat-icon>
+                    </button>
+                    <button
+                      mat-icon-button
+                      *ngIf="!step.isEditing"
+                      (click)="editStep(i, j)"
+                    >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="removeStep(i, j)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </div>
                 </div>
               </mat-step>
-              <mat-step>
-                <ng-template matStepLabel>
-                  <em>行程2</em>
-                </ng-template>
-                <h4>細節內容</h4>
-              </mat-step>
-              <mat-step>
-                <ng-template matStepLabel>
-                  <em>行程3</em>
-                </ng-template>
-                <h4>細節內容</h4>
-              </mat-step>
             </mat-vertical-stepper>
+            <button class="btn btn-primary mt-3" (click)="addStep(i)">
+              新增步驟
+            </button>
           </mat-expansion-panel-content>
         </mat-expansion-panel>
       </div>
