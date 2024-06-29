@@ -12,6 +12,29 @@
       >
         新增
       </button>
+      <button
+        mat-button
+        class="btn btn-primary mx-2"
+        (click)="openSettleDialog()"
+      >
+        結算
+      </button>
+    </div>
+    <!-- 下拉選單 -->
+    <div class="row">
+      <div class="col-md-4">
+        <mat-form-field appearance="outline">
+          <mat-label>只看誰</mat-label>
+          <mat-select (selectionChange)="applyFilter($event.value)">
+            <mat-option [value]="'all'">全部</mat-option>
+            <mat-option
+              *ngFor="let person of availablePeople"
+              [value]="person"
+              >{{ person }}</mat-option
+            >
+          </mat-select>
+        </mat-form-field>
+      </div>
     </div>
 
     <div *ngIf="view === 'table'">

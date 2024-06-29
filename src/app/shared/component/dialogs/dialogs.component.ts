@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Item } from '@app/constants/table.model';
+import { Item, availablePeople } from '@app/constants/table.model';
 
 /**
  * 新增／編輯 Modal 元件
@@ -11,8 +11,8 @@ import { Item } from '@app/constants/table.model';
   styleUrls: ['./dialogs.component.scss'],
 })
 export class DialogsComponent {
+  availablePeople = availablePeople;
   item: Item;
-  availablePeople: string[] = ['懶君', '周肉', '魚鵑'];
 
   constructor(
     public dialogRef: MatDialogRef<DialogsComponent>,

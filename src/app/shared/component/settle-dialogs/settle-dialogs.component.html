@@ -1,0 +1,59 @@
+<h2>結算結果</h2>
+<div *ngFor="let item of settledItems">
+  <h3>{{ item.name }}</h3>
+  <div *ngFor="let spend of item.spend">
+    <ul *ngFor="let currency of Object.keys(spend.totalSpent)">
+      <li>
+        （已付款）
+        <span *ngIf="currency === 'TWD'">新台幣</span>
+        <span *ngIf="currency === 'JPY'">日圓</span>
+        總花費：
+        <span *ngIf="currency === 'TWD'">NT$</span>
+        <span *ngIf="currency === 'JPY'">¥</span>
+        {{ spend.totalSpent[currency].toFixed(2) }}
+      </li>
+    </ul>
+    <ul *ngFor="let currency of Object.keys(spend.unpaidTotal)">
+      <li *ngIf="spend.unpaidTotal[currency] > 0">
+        （未付款）
+        <span *ngIf="currency === 'TWD'">新台幣</span>
+        <span *ngIf="currency === 'JPY'">日圓</span>
+        總花費：
+        <span *ngIf="currency === 'TWD'">NT$</span>
+        <span *ngIf="currency === 'JPY'">¥</span>
+        {{ spend.unpaidTotal[currency].toFixed(2) }}
+      </li>
+    </ul>
+  </div>
+</div>
+
+<h2>最終結算</h2>
+<div *ngFor="let item of settledItems">
+  <div *ngFor="let spend of item.spend">
+    <ul *ngFor="let settlement of spend.settlements">
+      <li>
+        {{ settlement.from }} 需要給 {{ settlement.to }}
+        <span *ngIf="settlement.currency === 'TWD'">NT$</span>
+        <span *ngIf="settlement.currency === 'JPY'">¥</span>
+        {{ settlement.amount.toFixed(2) }}
+      </li>
+    </ul>
+  </div>
+</div>
+
+<div *ngIf="Object.keys(unpaidTotalAmount).length > 0">
+  <h2>未付款金額總計</h2>
+  <ul *ngFor="let currency of Object.keys(unpaidTotalAmount)">
+    <li>
+      （未付款）
+      <span *ngIf="currency === 'TWD'">新台幣</span>
+      <span *ngIf="currency === 'JPY'">日圓</span>
+      金額總計：
+      <span *ngIf="currency === 'TWD'">NT$</span>
+      <span *ngIf="currency === 'JPY'">¥</span>
+      {{ unpaidTotalAmount[currency].toFixed(2) }}
+    </li>
+  </ul>
+</div>
+
+<button mat-button mat-dialog-close (click)="onClose()">關閉</button>
